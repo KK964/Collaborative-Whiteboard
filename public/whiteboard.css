@@ -1,0 +1,103 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  --TOP-BAR-HEIGHT: 80px;
+  --SIDE-BAR-WIDTH: 80px;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.workspace {
+  width: 100%;
+  height: 100%;
+}
+
+.workspace canvas {
+  position: absolute;
+  width: calc(100% - var(--SIDE-BAR-WIDTH));
+  height: calc(100% - var(--TOP-BAR-HEIGHT));
+}
+
+.mid-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.side-toolbar {
+  width: var(--SIDE-BAR-WIDTH);
+  height: 100%;
+  background-color: #f0f0f0;
+  border-right: 1px solid #ccc;
+}
+
+.top-toolbar {
+  display: flex;
+  align-content: center;
+  width: 100%;
+  height: var(--TOP-BAR-HEIGHT);
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #ccc;
+}
+
+.size-picker {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+}
+
+.size-picker p {
+  height: fit-content;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.top-toolbar div {
+  margin: 0;
+  margin-right: 2em;
+  padding: 0;
+}
+
+.tools {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.tools .tool-selector-item {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+button.tool-selector-item {
+  width: 100%;
+  height: 100%;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button.tool-selector-item:hover {
+  background-color: #e0e0e0;
+}
+
+button.tool-selector-item[data-selected] {
+  background-color: #fda9a9;
+}

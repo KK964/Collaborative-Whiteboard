@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Whiteboard Maker</title>
+    <link rel="stylesheet" href="home.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="about">
+        <h1>Whiteboard Tool</h1>
+        <p>A whiteboard application storing nothing on the server!</p>
+      </div>
+      <div class="actions">
+        <button id="create">Create Whiteboard</button>
+        <div class="join-container">
+          <h2>Join a Whiteboard</h2>
+          <input type="text" id="join-id" placeholder="Whiteboard ID" />
+          <button id="join">Join</button>
+        </div>
+        <p id="error" class="hidden"></p>
+      </div>
+    </div>
+    <script>
+      const create = document.getElementById('create');
+      const join = document.getElementById('join');
+      const joinId = document.getElementById('join-id');
+
+      const error = document.getElementById('error');
+
+      create.onclick = async () => {
+        const response = await fetch('/api/whiteboard/create');
+        const json = await response.json();
+        const { id } = json;
+        window.location.href = `/whiteboard/${id}`;
+      };
+
+      join.onclick = async () => {
+        const id = joinId.value;
+        if (!id) {
+          error.innerHTML = 'Please enter a whiteboard ID';
+          error.classList.remove('hidden');
+          return;
+        }
+
+        joinId.ariaDisabled = true;
+        joinId.disabled = true;
+        join.disabled = true;
+
+        const response = await fetch(`/api/whiteboard/${id}`);
+
+        const data = await response.json();
+        if (!data.exists) {
+          error.innerHTML = 'That whiteboard does not exist';
+          error.classList.remove('hidden');
+          joinId.disabled = false;
+          joinId.ariaDisabled = false;
+          join.disabled = false;
+          return;
+        }
+
+        window.location.href = `/whiteboard/${id}`;
+      };
+    </script>
+  </body>
+</html>

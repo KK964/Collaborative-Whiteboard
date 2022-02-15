@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Whiteboard Maker</title>
+    <link rel="stylesheet" href="/whiteboard.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="top-toolbar" id="top-bar">
+        <div class="color-pickers" id="color-pickers">
+          <div class="color-picker" id="line-color-container">
+            <label for="line-color">Line Color</label>
+            <input type="color" name="Line Color Picker" id="line-color" />
+            <label for="line-enabled">Line</label>
+            <input type="checkbox" name="Line" id="line-enabled" checked="true" />
+          </div>
+          <div class="color-picker" id="fill-color-container">
+            <label for="fill-color">Fill Color</label>
+            <input type="color" name="Fill Color Picker" id="fill-color" />
+            <label for="fill-enabled">Fill</label>
+            <input type="checkbox" name="Fill Enabled" id="fill-enabled" />
+          </div>
+        </div>
+        <div class="size-picker" style="left: 10em">
+          <p>Size:</p>
+          <p id="current-size">1</p>
+          <input type="range" name="Size Picker" id="size-slider" min="1" max="50" value="1" />
+        </div>
+      </div>
+      <div class="mid-container">
+        <div class="side-toolbar" id="side-bar">
+          <div class="tools" id="tool-container">
+            <button class="tool-selector-item" id="pen" data-selected>
+              <img src="/pen.png" alt="pen" />
+            </button>
+            <button class="tool-selector-item" id="eraser">
+              <img src="/eraser.png" alt="eraser" />
+            </button>
+            <button class="tool-selector-item" id="line">
+              <img src="/line.png" alt="line" />
+            </button>
+            <button class="tool-selector-item" id="rectangle">
+              <img src="/rectangle.png" alt="rectangle" />
+            </button>
+            <button class="tool-selector-item" id="circle">
+              <img src="/circle.png" alt="circle" />
+            </button>
+            <!-- <button class="tool-selector-item" id="text">
+              <img src="/text.png" alt="text" />
+            </button> -->
+          </div>
+        </div>
+        <div class="workspace">
+          <canvas id="draw-area"></canvas>
+          <canvas id="tool-preview"></canvas>
+          <canvas id="whois-area"></canvas>
+          <canvas id="draw-listener"></canvas>
+        </div>
+      </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/data.js"></script>
+    <script src="/canvas.js"></script>
+    <script src="/tools.js"></script>
+    <script src="/util.js"></script>
+    <script src="/socket.js"></script>
+  </body>
+</html>
