@@ -17,11 +17,13 @@ function setZoom() {
     canv.width = bb.width;
     canv.height = bb.height;
   }
+  rerender();
 }
 
 setZoom();
 
 document.addEventListener('resize', setZoom);
+window.addEventListener('resize', setZoom);
 
 let isDrawing = false;
 let drawingArray = [];
@@ -74,6 +76,7 @@ function preview() {
 function draw() {
   if (!getActiveTool()) return;
   getActiveTool().render(ctx, drawingArray);
+  addUserPath(drawingArray);
 }
 
 function renderLayers() {
