@@ -40,12 +40,18 @@ drawListener.addEventListener('mousedown', (e) => {
 });
 
 drawListener.addEventListener('mousemove', (e) => {
+  const pos = getMousePos(canvas, e);
   if (isDrawing === true) {
-    const pos = getMousePos(canvas, e);
+    const newx = pos.x;
+    const newy = pos.y;
+    const interpolated = interpolate({ x: x, y: y }, { x: newx, y: newy });
     x = pos.x;
     y = pos.y;
-    drawingArray.push({ x: x, y: y });
+    for (const point of interpolated) {
+      drawingArray.push(point);
+    }
   }
+  socket.emit('move', pos.x, pos.y);
 });
 
 drawListener.addEventListener('mouseup', (e) => {
@@ -80,15 +86,45 @@ function draw() {
 }
 
 function renderLayers() {
-  try {
+  t: try {
     toolPreviewCtx.clearRect(0, 0, toolPreview.width, toolPreview.height);
-    if (!getActiveTool || !getActiveTool()) return requestAnimationFrame(renderLayers);
-    if (drawingArray.length < 2) return requestAnimationFrame(renderLayers);
+    if (!getActiveTool || !getActiveTool()) break t;
+    if (drawingArray.length < 2) break t;
     preview();
-  } catch (e) {
-    console.log(e);
-  }
+  } catch (e) {}
+  try {
+    whoisCtx.clearRect(0, 0, whoisDrawing.width, whoisDrawing.height);
+    for (const user of Array.from(users.values())) {
+      // draw name above user.x, user.y
+      whoisCtx.fillStyle = user.color;
+      whoisCtx.font = '15px Arial';
+      whoisCtx.fillText(user.name, user.x, user.y - 20);
+    }
+  } catch (e) {}
   requestAnimationFrame(renderLayers);
 }
 
 renderLayers();
+
+// drag and drop files listeners
+
+drawListener.ondrop = (e) => {
+  e.preventDefault();
+  console.log('drop', e);
+  const itm = e.dataTransfer.items[0];
+  if (itm.kind !== 'file') return;
+  if (!itm.type.startsWith('image/')) return;
+  const file = itm.getAsFile();
+  var img = new Image();
+  img.onload = () => {
+    ctx.drawImage(img, 0, 0);
+  };
+  img.src = URL.createObjectURL(file);
+  file.arrayBuffer().then((buffer) => {
+    socket.emit('image', buffer);
+  });
+};
+
+drawListener.ondragover = (e) => {
+  e.preventDefault();
+};

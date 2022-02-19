@@ -12,12 +12,19 @@ const fillCheckbox = document.getElementById('fill-enabled');
 const sizeSlider = document.getElementById('size-slider');
 const currentSizeSliderValue = document.getElementById('current-size');
 
+function compressPath(path) {
+  return path.map((p) => Math.round(p.x * 100) / 100 + ',' + Math.round(p.y * 100) / 100).join(',');
+}
 class Tool {
   name;
   data;
   constructor(name, data) {
     this.name = name;
     this.data = data;
+  }
+
+  simplify(path) {
+    return path;
   }
 }
 
@@ -29,6 +36,8 @@ class Pen extends Tool {
   render(context, path) {
     if (path.length < 2) return;
     context.beginPath();
+    context.lineCap = 'round';
+    context.lineJoin = 'round';
     context.strokeStyle = this.data.color;
     context.lineWidth = this.data.width;
     context.moveTo(path[0].x, path[0].y);
@@ -40,6 +49,11 @@ class Pen extends Tool {
 
   preview(context, path) {
     this.render(context, path); // Preview is the same as render
+  }
+
+  export(path) {
+    // pen, color, width, path
+    return `pen,${this.data.color},${this.data.width},${compressPath(path)}`;
   }
 }
 
@@ -53,6 +67,8 @@ class Eraser extends Tool {
   render(context, path) {
     if (path.length < 2) return;
     context.beginPath();
+    context.lineCap = 'round';
+    context.lineJoin = 'round';
     context.globalCompositeOperation = 'destination-out';
     context.lineWidth = this.data.width;
     context.moveTo(path[0].x, path[0].y);
@@ -67,6 +83,11 @@ class Eraser extends Tool {
     this.preview_pen.data.width = this.data.width;
     this.preview_pen.render(context, path);
   }
+
+  export(path) {
+    // eraser, width, path
+    return `eraser,${this.data.width},${compressPath(path)}`;
+  }
 }
 
 class Line extends Tool {
@@ -77,6 +98,7 @@ class Line extends Tool {
   render(context, path) {
     if (path.length < 2) return;
     context.beginPath();
+    context.lineCap = 'round';
     context.strokeStyle = this.data.color;
     context.lineWidth = this.data.width;
     context.moveTo(path[0].x, path[0].y);
@@ -86,6 +108,21 @@ class Line extends Tool {
 
   preview(context, path) {
     this.render(context, path);
+  }
+
+  export(path) {
+    // line, color, width, path
+    const newPath = [];
+    newPath.push(path[0]);
+    newPath.push(path[path.length - 1]);
+    return `line,${this.data.color},${this.data.width},${compressPath(newPath)}`;
+  }
+
+  simplify(path) {
+    const simplified = [];
+    simplified.push(path[0]);
+    simplified.push(path[path.length - 1]);
+    return simplified;
   }
 }
 
@@ -122,6 +159,23 @@ class Rectangle extends Tool {
   preview(context, path) {
     this.render(context, path);
   }
+
+  export(path) {
+    // rectangle, color, width, fillColor, fill, line, path
+    const newPath = [];
+    newPath.push(path[0]);
+    newPath.push(path[path.length - 1]);
+    return `rectangle,${this.data.color},${this.data.width},${this.data.fillColor},${
+      this.data.fill
+    },${this.data.line},${compressPath(newPath)}`;
+  }
+
+  simplify(path) {
+    const simplified = [];
+    simplified.push(path[0]);
+    simplified.push(path[path.length - 1]);
+    return simplified;
+  }
 }
 
 class Circle extends Tool {
@@ -137,7 +191,7 @@ class Circle extends Tool {
     context.arc(
       path[0].x,
       path[0].y,
-      Math.abs(distance(path[path.length - 1].x, path[path.length - 1].y, path[0].x, path[1].y)),
+      distance(path[0].x, path[0].y, path[path.length - 1].x, path[path.length - 1].y),
       0,
       2 * Math.PI
     );
@@ -153,10 +207,23 @@ class Circle extends Tool {
   preview(context, path) {
     this.render(context, path);
   }
-}
 
-function distance(x1, y1, x2, y2) {
-  return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+  export(path) {
+    // circle, color, width, fillColor, fill, line, path
+    const newPath = [];
+    newPath.push(path[0]);
+    newPath.push(path[path.length - 1]);
+    return `circle,${this.data.color},${this.data.width},${this.data.fillColor},${this.data.fill},${
+      this.data.line
+    },${compressPath(newPath)}`;
+  }
+
+  simplify(path) {
+    const simplified = [];
+    simplified.push(path[0]);
+    simplified.push(path[path.length - 1]);
+    return simplified;
+  }
 }
 
 var selectedTool;
@@ -231,6 +298,43 @@ function setActiveTool(tool) {
       enableElement(colorPickersContainer);
       break;
   }
+}
+
+function convertExported(exp) {
+  const data = exp.split(',');
+  const id = data.shift();
+  const tool = data[0];
+  let toolData = {};
+  switch (tool) {
+    case 'eraser': {
+      toolData.width = data[1];
+      break;
+    }
+    case 'rectangle':
+    case 'circle': {
+      toolData.fillColor = data[3];
+      toolData.fill = data[4] === 'true';
+      toolData.line = data[5] === 'true';
+    }
+    case 'pen':
+    case 'line': {
+      toolData.color = data[1];
+    }
+    default: {
+      toolData.width = data[2];
+    }
+  }
+  let path = [];
+  let x;
+  let y;
+  for (let i = Object.keys(toolData).length + 1; i < data.length; i++) {
+    x = parseInt(data[i]);
+    i++;
+    y = parseInt(data[i]);
+    path.push({ x, y });
+  }
+  console.log({ id, tool, toolData, path });
+  return { id: id, tool: new toolLookupTable[tool](toolData), path };
 }
 
 function getActiveTool() {

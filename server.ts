@@ -91,15 +91,32 @@ io.on('connection', (socket: Socket) => {
     socket.to(id).emit('join', user);
   });
   socket.on('update', (data: any) => {
+    if (!whiteboard) return;
     socket.to(whiteboard.id).emit('refresh', data);
   });
   socket.on('move', (x: number, y: number) => {
     if (!whiteboard) return;
     socket.to(whiteboard.id).emit('move', socket.id, x, y);
   });
-  socket.on('draw', (width: number, color: string, path: { x: number; y: number }[]) => {
+  socket.on('draw', (path) => {
     if (!whiteboard) return;
-    socket.to(whiteboard.id).emit('draw', socket.id, width, color, path);
+    socket.to(whiteboard.id).emit('draw', path);
+  });
+  socket.on('delete', (id: string) => {
+    if (!whiteboard) return;
+    socket.to(whiteboard.id).emit('delete', id);
+  });
+  socket.on('image', (buffer) => {
+    if (!whiteboard) return;
+    socket.to(whiteboard.id).emit('image', buffer);
+  });
+  socket.on('user-update', (username: string, color: string) => {
+    if (!whiteboard) return;
+    const user = whiteboard.users.get(socket.id);
+    if (!user) return;
+    user.username = username;
+    user.color = color;
+    socket.to(whiteboard.id).emit('user-update', user);
   });
   socket.on('disconnect', () => {
     if (!whiteboard) return;

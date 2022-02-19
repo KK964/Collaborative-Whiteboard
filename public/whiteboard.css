@@ -2,7 +2,7 @@
   box-sizing: border-box;
   margin: 0;
   --TOP-BAR-HEIGHT: 80px;
-  --SIDE-BAR-WIDTH: 80px;
+  --SIDE-BAR-WIDTH: 50px;
 }
 
 html,
@@ -46,11 +46,17 @@ body {
 
 .top-toolbar {
   display: flex;
+  flex-direction: row;
   align-content: center;
+  justify-content: space-between;
   width: 100%;
   height: var(--TOP-BAR-HEIGHT);
   background-color: #f0f0f0;
   border-bottom: 1px solid #ccc;
+}
+
+.user-style {
+  align-self: center;
 }
 
 .size-picker {
@@ -65,9 +71,16 @@ body {
   margin-bottom: auto;
 }
 
+.size-picker input {
+  margin-right: 1em;
+}
+
+.size-picker input:last-child {
+  margin-right: 0;
+}
+
 .top-toolbar div {
-  margin: 0;
-  margin-right: 2em;
+  margin: 0 2em;
   padding: 0;
 }
 
@@ -75,23 +88,31 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
+  width: var(--SIDE-BAR-WIDTH);
+  height: calc(100% - var(--TOP-BAR-HEIGHT) - 1em);
 }
 
 .tools .tool-selector-item {
-  margin-top: auto;
-  margin-bottom: auto;
+  margin-top: 0.1em;
 }
 
 button.tool-selector-item {
-  width: 100%;
-  height: 100%;
+  width: calc(var(--SIDE-BAR-WIDTH) - 0.2em);
+  height: calc(var(--SIDE-BAR-WIDTH) - 0.2em);
   background-color: #f0f0f0;
-  border: 1px solid #ccc;
+  border: 0;
   border-radius: 5px;
+  padding: 0;
   cursor: pointer;
+}
+
+button img {
+  width: calc(var(--SIDE-BAR-WIDTH) - 1em);
+  height: calc(var(--SIDE-BAR-WIDTH) - 1em);
+}
+
+.disabled {
+  display: none;
 }
 
 button.tool-selector-item:hover {
@@ -99,5 +120,9 @@ button.tool-selector-item:hover {
 }
 
 button.tool-selector-item[data-selected] {
-  background-color: #fda9a9;
+  background-color: #525252;
+}
+
+button.tool-selector-item[data-selected] img {
+  stroke: whitesmoke;
 }

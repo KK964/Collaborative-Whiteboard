@@ -21,33 +21,58 @@
             <input type="checkbox" name="Fill Enabled" id="fill-enabled" />
           </div>
         </div>
-        <div class="size-picker" style="left: 10em">
+        <div class="size-picker">
           <p>Size:</p>
           <p id="current-size">1</p>
           <input type="range" name="Size Picker" id="size-slider" min="1" max="50" value="1" />
+          <p>Opacity:</p>
+          <p id="current-opacity">100</p>
+          <input
+            type="range"
+            name="Opacity Picker"
+            id="current-opacity"
+            min="0"
+            max="100"
+            value="100"
+          />
+        </div>
+        <div class="user-style">
+          <label for="user-style-color">Display Color</label>
+          <input type="color" name="User Color" id="user-style-color" />
+          <label for="user-style-name">Display Name</label>
+          <input type="text" name="Name" id="user-style-name" maxlength="20" />
         </div>
       </div>
       <div class="mid-container">
         <div class="side-toolbar" id="side-bar">
           <div class="tools" id="tool-container">
             <button class="tool-selector-item" id="pen" data-selected>
-              <img src="/pen.png" alt="pen" />
+              <img src="/images/pen.svg" alt="pen" />
             </button>
             <button class="tool-selector-item" id="eraser">
-              <img src="/eraser.png" alt="eraser" />
+              <img src="/images/eraser.svg" alt="eraser" />
             </button>
             <button class="tool-selector-item" id="line">
-              <img src="/line.png" alt="line" />
+              <img src="/images/line.svg" alt="line" />
             </button>
             <button class="tool-selector-item" id="rectangle">
-              <img src="/rectangle.png" alt="rectangle" />
+              <img src="/images/rectangle.svg" alt="rectangle" />
             </button>
             <button class="tool-selector-item" id="circle">
-              <img src="/circle.png" alt="circle" />
+              <img src="/images/circle.svg" alt="circle" />
             </button>
-            <!-- <button class="tool-selector-item" id="text">
-              <img src="/text.png" alt="text" />
-            </button> -->
+            <button class="tool-selector-item" id="text">
+              <img src="/images/text.svg" alt="text" />
+            </button>
+            <button class="tool-selector-item" id="move">
+              <img src="/images/move.svg" alt="move" />
+            </button>
+            <button class="tool-selector-item" id="pan">
+              <img src="/images/pan.svg" alt="pan" />
+            </button>
+            <button class="tool-selector-item" id="zoom">
+              <img src="/images/zoom.svg" alt="zoom" />
+            </button>
           </div>
         </div>
         <div class="workspace">
@@ -64,5 +89,6 @@
     <script src="/tools.js"></script>
     <script src="/util.js"></script>
     <script src="/socket.js"></script>
+    <script src="/index.js"></script>
   </body>
 </html>
